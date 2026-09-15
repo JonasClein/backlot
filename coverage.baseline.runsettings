@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <!--
+            The assembly names for the agreed QA-Project scope
+          -->
+          <Include>
+          <!-- Core -->
+            [Backlot.Core]*,
+            [Backlot.Defaults]*,
+            [Backlot.DependencyInjection.Autofac]*,
+            
+          <!-- Infrastructure  -->  
+            <!-- Infrastructure Authentication -->
+                [Backlot.Authentication.Auth0]*,
+                [Backlot.Authentication.Basic]*,
+                [Backlot.Authentication.BuiltIn]*,
+                [Backlot.Authentication.BuiltIn.Redis]*,
+              <!-- Infrastructure Databases -->
+                [Backlot.Services.LiteDB]*,
+                [Backlot.Services.RavenDb]*,
+                [Backlot.Services.SqlDb]*,
+              <!-- Infrastructure FileSystems -->  
+                [Backlot.Services.Filesystem.BlobStorage]*,
+                [Backlot.Services.Filesystem.LocalDiskStorage]*,
+            [Backlot.Services.Postmark]*,
+            
+          <!-- Server -->
+            <!-- Server Formatters -->
+                [Backlot.Http.Media.Formatters.Csv]*,
+                [Backlot.Http.Media.Formatters.Html]*,
+            [Backlot.Functions]*,
+            [Backlot.Http]*,
+            [Backlot.Http.DependencyInjection.Autofac]*,
+            [Backlot.WebApp]*
+          </Include>
+          
+          <ExcludeByAttribute>
+            GeneratedCodeAttribute,
+            CompilerGeneratedAttribute
+          </ExcludeByAttribute>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
