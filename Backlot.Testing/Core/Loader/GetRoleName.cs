@@ -73,11 +73,17 @@ public class GetRoleName
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.Throws<ArgumentException>(() => Backlot.Core.Loader.GetRoleName(origin.GetType()));
             Assert.That(resultRole, Is.EqualTo("Formula"));
             Assert.That(resultProxy, Is.EqualTo("Formula"));
         });
         
+    }
+
+    [Test]
+    public void GetRoleName_NonRoleType_ThrowsArgumentException()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => Backlot.Core.Loader.GetRoleName(typeof(JObject)));
     }
 
     [Test]
