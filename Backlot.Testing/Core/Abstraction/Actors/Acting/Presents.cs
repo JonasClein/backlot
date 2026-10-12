@@ -1,18 +1,14 @@
-using Backlot.Core.Abstraction.Actors;
+﻿using Backlot.Core.Abstraction.Actors;
 using Backlot.Core.Services;
 using Backlot.Services.Filesystem.LocalDiskStorage;
-using Backlot.Testing.Core;
 using Backlot.Testing.Shared.TestModels;
 using Newtonsoft.Json.Linq;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace Backlot.Testing;
+namespace Backlot.Testing.Core.Abstraction.Actors.Acting;
 
-/// <summary>
-/// Test to check if intercepting using the backlot interceptors works correctly.
-/// </summary>
-public class MustachExpression
+public class Presents
 {
     [SetUp]
     public void Setup()
@@ -21,9 +17,9 @@ public class MustachExpression
     }
     
     [Test]
-    public void Presents_WithActorNotHavingAUidAndARoleAliasReferingToAExpressionEngine_UidIsCalculatedBasedOnExpressionEngine()
+    public void Presents_WithActorNotHavingAUidAndARoleAliasReferringToAnExpressionEngine_UidIsCalculatedBasedOnExpressionEngine()
     {
-        // arrange:
+        // Arrange
         var actor = JObject.FromObject(new
         {
             Number1 = 7,
@@ -33,10 +29,10 @@ public class MustachExpression
             FormulaId = "12",
         });
 
-        // act
+        // Act
         var role = actor.Presents<IFormula>();
         
-        // assert:
-        Assert.That(role.Uid == "12_sumexample!");
+        // Assert
+        Assert.That(role.Uid, Is.EqualTo("12_sumexample!"));
     }
 }

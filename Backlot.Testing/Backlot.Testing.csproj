@@ -29,4 +29,7 @@
       <HintPath>..\..\..\.nuget\packages\microsoft.extensions.logging\10.0.4\lib\net10.0\Microsoft.Extensions.Logging.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Core\Abstraction\Actors\" />
+  </ItemGroup>
 </Project>
