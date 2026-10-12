@@ -4,6 +4,7 @@ using System.Linq;
 using Backlot.Core.Abstraction.Actors;
 using Backlot.Core.Json;
 using Backlot.Testing.Core;
+using Backlot.Testing.Shared.TestModels;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 

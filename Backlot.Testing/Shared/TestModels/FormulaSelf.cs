@@ -1,8 +1,9 @@
 ﻿using System;
 using Backlot.Core;
 using Backlot.Core.Json;
+using Backlot.Testing.Core;
 
-namespace Backlot.Testing.Core;
+namespace Backlot.Testing.Shared.TestModels;
 
 public class FormulaSelf : IFormula
 {

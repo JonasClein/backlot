@@ -9,6 +9,7 @@ using NUnit.Framework;
 using System.Dynamic;
 using System.Linq;
 using Backlot.Core.Json.Serialization.Newtonsoft;
+using Backlot.Testing.Shared.TestModels;
 using NSubstitute;
 
 namespace Backlot.Testing;

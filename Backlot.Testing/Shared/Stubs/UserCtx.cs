@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Backlot.Core.Security;
 
-namespace Backlot.Testing.Core;
+namespace Backlot.Testing.Shared.Stubs;
 
 public class UserCtx : IUserContext
 {

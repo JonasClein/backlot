@@ -5,7 +5,8 @@ using Backlot.Core.DependencyInjection;
 using Backlot.Core.Json;
 using Backlot.Core.Services;
 using Backlot.Testing.Core;
-using Backlot.Testing.Core.Scenarios;
+using Backlot.Testing.Shared.Scenarios;
+using Backlot.Testing.Shared.TestModels;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 // ReSharper disable SuspiciousTypeConversion.Global : For unit testing we do not need to check this

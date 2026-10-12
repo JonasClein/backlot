@@ -1,6 +1,6 @@
 ﻿using Backlot.Core;
 
-namespace Backlot.Testing.Core;
+namespace Backlot.Testing.Shared.TestModels;
 
 /// <summary>
 /// Representing a test role using another role as a property

@@ -1,6 +1,7 @@
 ﻿using Backlot.Core.Abstraction.Scenarios;
+using Backlot.Testing.Shared.TestModels;
 
-namespace Backlot.Testing.Core.Scenarios;
+namespace Backlot.Testing.Shared.Scenarios;
 
 /// <summary>
 /// Dummy scenario having 1 role and a none persistable Result

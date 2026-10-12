@@ -5,6 +5,8 @@ using Backlot.Core.Abstraction.Actors;
 using Backlot.Core.Exceptions;
 using Backlot.Core.Security;
 using Backlot.Testing.Core;
+using Backlot.Testing.Shared.Stubs;
+using Backlot.Testing.Shared.TestModels;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 

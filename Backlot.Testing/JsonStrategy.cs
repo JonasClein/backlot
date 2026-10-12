@@ -4,6 +4,7 @@ using Backlot.Core.Json.Serialization.Newtonsoft;
 using Backlot.Core.Services;
 using Backlot.Services.Filesystem.LocalDiskStorage;
 using Backlot.Testing.Core;
+using Backlot.Testing.Shared.TestModels;
 using NSubstitute;
 using NUnit.Framework;
 

@@ -3,7 +3,7 @@ using Backlot.Core;
 using Backlot.Core.Json;
 using Backlot.Defaults.Instructing;
 
-namespace Backlot.Testing.Core;
+namespace Backlot.Testing.Shared.TestModels;
 
 public interface INumberBase : IRole
 {

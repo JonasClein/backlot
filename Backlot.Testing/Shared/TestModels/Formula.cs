@@ -1,4 +1,4 @@
-﻿namespace Backlot.Testing.Core;
+﻿namespace Backlot.Testing.Shared.TestModels;
 
 public class Formula
 {

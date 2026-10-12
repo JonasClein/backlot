@@ -5,7 +5,7 @@ using Backlot.Core;
 using Backlot.Core.Security;
 using Backlot.Core.Services;
 
-namespace Backlot.Testing.Core
+namespace Backlot.Testing.Shared.Stubs
 {
     internal class PersistedRoleRepositoryStub : BasePersistedRoleRepository
     {

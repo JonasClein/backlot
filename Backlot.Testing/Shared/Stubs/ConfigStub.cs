@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Backlot.Core;
 using Backlot.Core.Abstraction.Configuration;
 using Backlot.Core.Services;
 
-namespace Backlot.Testing.Core;
+namespace Backlot.Testing.Shared.Stubs;
 
 public class ConfigStub : IConfigurationManager
 {

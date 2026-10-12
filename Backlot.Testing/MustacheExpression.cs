@@ -2,6 +2,7 @@ using Backlot.Core.Abstraction.Actors;
 using Backlot.Core.Services;
 using Backlot.Services.Filesystem.LocalDiskStorage;
 using Backlot.Testing.Core;
+using Backlot.Testing.Shared.TestModels;
 using Newtonsoft.Json.Linq;
 using NSubstitute;
 using NUnit.Framework;

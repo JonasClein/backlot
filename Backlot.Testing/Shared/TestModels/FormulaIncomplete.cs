@@ -1,4 +1,4 @@
-﻿namespace Backlot.Testing.Core;
+﻿namespace Backlot.Testing.Shared.TestModels;
 
 /// <summary>
 /// Incomplete object which can be presented as an IFormula

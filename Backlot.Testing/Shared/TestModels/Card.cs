@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Backlot.Core;
 using Backlot.Core.Abstraction.Actors;
 
-namespace Backlot.Testing.Core;
+namespace Backlot.Testing.Shared.TestModels;
 
 public interface ICard : IPersist
 {

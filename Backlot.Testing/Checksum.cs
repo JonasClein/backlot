@@ -2,6 +2,7 @@ using Backlot.Core;
 using Backlot.Core.Abstraction.Actors;
 using Backlot.Core.Abstraction.Roles;
 using Backlot.Testing.Core;
+using Backlot.Testing.Shared.TestModels;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 // ReSharper disable SuspiciousTypeConversion.Global

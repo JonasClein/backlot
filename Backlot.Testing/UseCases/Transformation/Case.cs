@@ -9,6 +9,7 @@ using Backlot.Core.Abstraction.Roles;
 using Backlot.Core.Services;
 using Backlot.Defaults.Roles;
 using Backlot.Testing.Core;
+using Backlot.Testing.Shared.TestModels;
 using NSubstitute;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;

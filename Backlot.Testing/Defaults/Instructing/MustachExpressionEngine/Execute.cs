@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Backlot.Testing.Core;
+using Backlot.Testing.Shared.TestModels;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 

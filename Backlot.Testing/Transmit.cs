@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Backlot.Core;
 using Backlot.Core.Abstraction.Actors;
 using Backlot.Testing.Core;
+using Backlot.Testing.Shared.TestModels;
 using NUnit.Framework;
 // ReSharper disable SuspiciousTypeConversion.Global
 
