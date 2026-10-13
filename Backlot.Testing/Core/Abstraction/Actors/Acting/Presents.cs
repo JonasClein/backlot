@@ -1,10 +1,14 @@
-﻿using Backlot.Core.Abstraction.Actors;
+﻿using System.Collections.Generic;
+using Backlot.Core;
+using Backlot.Core.Abstraction.Actors;
+using Backlot.Core.Json;
 using Backlot.Core.Services;
 using Backlot.Services.Filesystem.LocalDiskStorage;
 using Backlot.Testing.Shared.TestModels;
 using Newtonsoft.Json.Linq;
 using NSubstitute;
 using NUnit.Framework;
+// ReSharper disable SuspiciousTypeConversion.Global
 
 namespace Backlot.Testing.Core.Abstraction.Actors.Acting;
 
@@ -13,12 +17,13 @@ public class Presents
     [SetUp]
     public void Setup()
     {
-        Initialize.Setup((builder) => new AliasDirector(new LocalDiskStorage(), Substitute.For<IConfigurationManager>(), builder));
+        Initialize.Setup();
     }
     
     [Test]
     public void Presents_WithActorNotHavingAUidAndARoleAliasReferringToAnExpressionEngine_UidIsCalculatedBasedOnExpressionEngine()
     {
+        Initialize.Setup((builder) => new AliasDirector(new LocalDiskStorage(), Substitute.For<IConfigurationManager>(), builder));
         // Arrange
         var actor = JObject.FromObject(new
         {
@@ -35,4 +40,105 @@ public class Presents
         // Assert
         Assert.That(role.Uid, Is.EqualTo("12_sumexample!"));
     }
+    
+    [Test]
+    public void Presents_OneActorPresentedTwiceAsDifferentRoles_ActsAsAnIJProxy()
+    {
+        //NOTE: casting back from a none proxied role is not possible (except when it is a self)
+        //NOTE: However when proxied, a role has it's actor inside which can be casted to the original, see; Intercepting_WithTypedActor_ActorAndProxiedValuesAreInSync
+
+        // Arrange
+        var initial = new Formula()
+        {
+            Uid = "023d02600ded",
+            Number1 = 7,
+            Number2 = 9,
+            Operation = "sum"
+        };
+
+        // Act
+        var formula = initial.Presents<IFormula>();
+        var persisted = initial.Presents<IPersist>();
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            // Always handled with a JsonInterceptor and therefor a IJProxy/
+            Assert.That(formula, Is.InstanceOf<IJProxy>());
+            Assert.That(persisted, Is.InstanceOf<IJProxy>());
+
+            //when presenting the role, the role properties are accessible.
+            Assert.That(formula.Number1, Is.EqualTo(7));
+            Assert.That(persisted.Uid, Is.EqualTo(formula.Uid));
+        });
+    }
+    
+    [Test]
+    public void Presents_DictionaryActorWithNoneMatchingUid_NotMatchingUidIsResolvedFromAlias()
+    {
+        // Arrange
+        var dictionary = new Dictionary<string, object>
+        {
+            { "BSN AN", "12355" },
+            { "Name", "Jeroen" }
+        };
+        
+        // Act
+        var person = dictionary.Presents<IPerson>();
+        
+        // Assert
+        Assert.That(person.Uid, Is.EqualTo("12355"));
+    }
+    
+    [Test]
+    public void Presents_TypedActorWithDifferentPropertyTypes_DifferentTypesAreConvertedToWhatTheRoleDefines()
+    {
+        // Arrange
+        var origin = new Formula()
+        {
+            Number1 = 7,
+            Number2 = 9,
+            Operation = "sum",
+        };
+
+        // Act
+        var role = origin.Presents<IFormulaTypeChanged>();
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(role.Number1, Is.EqualTo("7"));
+            Assert.That(role.Number2, Is.EqualTo("9"));
+        });
+    }
+    
+    [Test]
+    public void Presents_AnonymousActor_ReturnsProxyWithAccessibleProperties()
+    {
+        // Arrange
+        var initial = new
+        {
+            Uid = "023d02600ded",
+            Number1 = 7,
+            Number2 = 9,
+            Operation = "sum"
+        };
+
+        // Act
+        var formula = initial.Presents<IFormula>();
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            //the proxies are not of the same type as the actor, they present the role;
+            Assert.That(formula is IProxiedRole);
+
+            //the underlying actor is of the original type.
+            Assert.That(((IProxiedRole)formula).Actor, Is.Not.Null);
+
+            //when presenting the role, the role properties are accessible.
+            Assert.That(formula.Number1, Is.EqualTo(7));
+        });
+    }
+    
 }

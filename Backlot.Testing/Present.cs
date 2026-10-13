@@ -27,42 +27,6 @@ public class Present
     }
 
     [Test]
-    public void Presents_OneActorPresentedTwiceAsDifferentRoles_ItActAsAIJProxy()
-    {
-        //NOTE: casting back from a none proxied role is not possible (except when it is a self)
-        //NOTE: However when proxied, a role has it's actor inside which can be casted to the original, see; Intercepting_WithTypedActor_ActorAndProxiedValuesAreInSync
-
-        #region ARRANGE
-
-        string uid = "023d02600ded";
-
-        var initial = new Formula()
-        {
-            Uid = uid,
-            Number1 = 7,
-            Number2 = 9,
-            Operation = "sum"
-        };
-
-        #endregion
-
-        #region ACT
-
-        var formula = initial.Presents<IFormula>();
-        var persisted = initial.Presents<IPersist>();
-
-        #endregion
-
-        // Always handled with a JsonInterceptor and therefor a IJProxy/
-        Assert.That(formula is IJProxy);
-        Assert.That(persisted is IJProxy);
-
-        //when presenting the role, the role properties are accessable.
-        Assert.That(formula.Number1 == 7);
-        Assert.That(persisted.Uid == formula.Uid);
-    }
-
-    [Test]
     public async Task Presents_AnonymousActor_ProxiedRole()
     {
         #region ARRANGE
@@ -110,39 +74,5 @@ public class Present
         Assert.That(persisted.Number1 == 7);
     }
     
-    [Test]
-    public void Presents_TypedActorWithNoneMatchingPropertyTypes_NotMatchingTypesAreConvertedAnRespectedAsWhatTheRoleDefines()
-    {
-        #region ARRANGE
-        var origin = new Formula()
-        {
-            Number1 = 7,
-            Number2 = 9,
-            Operation = "sum",
-        };
-
-        #endregion
-
-        #region ACT
-        
-        var role = origin.Presents<IFormulaTypeChanged>();
-
-        #endregion
-        
-        Assert.That(role.Number1 == "7");
-        Assert.That(role.Number2 == "9");
-    }
-
-    [Test]
-    public void Presents_DictionaryActorWithNoneMatchingUid_NotMatchingUidIsMathedToWhatFieldAliassingDefines()
-    {
-        var dic = new Dictionary<string, object>();
-        dic.Add("BSN AN", "12355");
-        dic.Add("Name", "Jeroen");
-
-        var person = dic.Presents<IPerson>();
-
-        Assert.That(person.Uid == "12355");
-    }
 
 }
