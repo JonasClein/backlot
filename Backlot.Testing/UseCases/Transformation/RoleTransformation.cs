@@ -8,7 +8,6 @@ using Backlot.Core.Abstraction.Actors;
 using Backlot.Core.Abstraction.Roles;
 using Backlot.Core.Services;
 using Backlot.Defaults.Roles;
-using Backlot.Testing.Core;
 using Backlot.Testing.Shared.TestModels;
 using NSubstitute;
 using Newtonsoft.Json.Linq;
@@ -17,9 +16,15 @@ using NUnit.Framework;
 namespace Backlot.Testing.UseCases.Transformation;
 
 /// <summary>
-/// Unit test for testing transformations a role made during time.
+/// Unit tests for testing transformations a role made during time.
 /// </summary>
-public class Case
+
+/// /// <summary>
+/// As a Backlot developer,
+/// I want to compare self-role and JSON revisions using forward transformations,
+/// so that changed property values are returned, including values set to null.
+/// </summary>
+public class RoleTransformation
 {
 
     #region Setup
@@ -112,55 +117,37 @@ public class Case
     #endregion
     
     [Test]
-    public async Task Transformation_UsingASelfRole_TransformationHasToBeReturned()
+    public async Task GivenSelfRoleRevisions_WhenForwardTransformationIsPlayed_ThenTransformationHasToBeReturned()
     {
-        #region ARRANGE
-
+        // Arrange
         Setup(SetupSelfRevisions);
         
         var seek = Acting.New<ISeek>();
         seek.Command = "fwd";
         seek.For = SetupSelfRevisions().First().Reference;
 
-        #endregion
-
-        #region ACT
-
+        // Act
         var result = await Backlot.Defaults.Scenarios.Persistance.Transformation.Play(seek);
         
-        #endregion
-
-        #region ASSERT
-        
-        Assert.That(result != null);
-        
-        #endregion
+        // Assert
+        Assert.That(result, Is.Not.Null);
     }
     
     [Test]
-    public async Task Transformation_UsingARevisionWithANullValue_TransformationIsReturnedIncludingThisNullValue()
+    public async Task GivenJsonRevisionWithNullValue_WhenForwardTransformationIsPlayed_ThenTransformationIsReturnedIncludingNullValue()
     {
-        #region ARRANGE
-
+        // Arrange
         Setup(SetupJsonWithNullRevisions);
         
         var seek = Acting.New<ISeek>();
         seek.Command = "fwd";
         seek.For = SetupJsonWithNullRevisions().First().Reference;
 
-        #endregion
-
-        #region ACT
-        
+        // Act
         var result = await Backlot.Defaults.Scenarios.Persistance.Transformation.Play(seek);
         
-        #endregion
-        
-        #region ASSERT
-        
-        Assert.That(result["Number2"]?.Value<int>() == 3); // The unknown extras property is still there.
-        Assert.That(result["Operation"]?.Value<string>() == null);
-        
-        #endregion
+        // Assert
+        Assert.That(result["Number2"]?.Value<int>(), Is.EqualTo(3));
+        Assert.That(result["Operation"]?.Value<string>(), Is.Null);
     }
 }
