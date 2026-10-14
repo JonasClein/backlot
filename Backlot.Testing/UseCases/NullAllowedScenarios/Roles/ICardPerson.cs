@@ -1,6 +1,6 @@
 ﻿using Backlot.Core;
 
-namespace Backlot.Testing.UseCases.NullAllowed.Roles;
+namespace Backlot.Testing.UseCases.NullAllowedScenarios.Roles;
 
 public interface ICardPerson : IRole
 {

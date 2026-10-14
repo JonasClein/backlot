@@ -1,8 +1,8 @@
 ﻿using Backlot.Core.Abstraction.Scenarios;
 using Backlot.Core.Security;
-using Backlot.Testing.UseCases.NullAllowed.Roles;
+using Backlot.Testing.UseCases.NullAllowedScenarios.Roles;
 
-namespace Backlot.Testing.UseCases.NullAllowed.Scenarios;
+namespace Backlot.Testing.UseCases.NullAllowedScenarios.Scenarios;
 
 [Scenario(typeof(ProcessWithNullAllowed), access: [Access.Open])]
 public class ProcessWithNullAllowed : Scenario<ProcessWithNullAllowed, ICustomerCard, bool>

@@ -5,11 +5,11 @@ using Backlot.Core.Abstraction.Actors;
 using Backlot.Core.Abstraction.Roles;
 using Backlot.Core.DependencyInjection;
 using Backlot.Core.Services;
-using Backlot.Testing.UseCases.NullAllowed.Roles;
-using Backlot.Testing.UseCases.NullAllowed.Scenarios;
+using Backlot.Testing.UseCases.NullAllowedScenarios.Roles;
+using Backlot.Testing.UseCases.NullAllowedScenarios.Scenarios;
 using NUnit.Framework;
 
-namespace Backlot.Testing.UseCases.NullAllowed;
+namespace Backlot.Testing.UseCases.NullAllowedScenarios;
 
 /// <summary>
 /// Scenarios are build by the ScenarioBuilder. Role Parameters are given before play starts (as a collection or a single item),
@@ -18,7 +18,13 @@ namespace Backlot.Testing.UseCases.NullAllowed;
 /// With NullAllowed you can ensure a role is allowed to be null when the scenario starts.
 /// Keep in mind that Validations are still executed against all Roles that are defined being public available within the scenario.
 /// </summary>
-public class Case
+
+/// <summary>
+/// As a Backlot developer,
+/// I want to configure scenarios for roles to be optional,
+/// so that a scenario can execute when a related role is not available.
+/// </summary>
+public class OptionalRoleScenario
 {
     [SetUp]
     public void Setup()
@@ -27,58 +33,46 @@ public class Case
     }
 
     [Test]
-    public Task Play_ScenarioWithoutNullAllowedAndRolesAreNotDefined_Exception()
+    public void GivenMissingRole_WhenScenarioWithoutNullAllowedIsPlayed_ThenArgumentExceptionIsThrown()
     {
-        #region ARRANGE
+        // Arrange
         
-        var cardcode = new
+        var cardCode = new
         {
             Uid = "DD50AE10-5910-4C0C-8208-F8287D9220EC",
             CardCode = "9EEA3F40-202601",
             BardCode = "111111111111111"
         }.Presents<ICustomerCard>();
         
-        #endregion
-        
-        #region ACT &  ASSERT
-        
+        // Act & Assert
         Assert.ThrowsAsync<ArgumentException>(async () =>
         {
-            await ProcessWithoutNullAllowed.Play(cardcode);
+            await ProcessWithoutNullAllowed.Play(cardCode);
         });
-        return Task.CompletedTask;
-
-        #endregion
     }
     
     [Test]
-    public async Task Play_ScenarioWithNullAllowedAndRolesAreNotDefined_ScenarioExecuted()
+    public async Task GivenMissingRole_WhenScenarioWithNullAllowedIsPlayed_ThenScenarioExecutes()
     {
-        #region ARRANGE
-        
-        var cardcode = new
+        // Arrange
+        var cardCode = new
         {
             Uid = "DD50AE10-5910-4C0C-8208-F8287D9220EC",
             CardCode = "9EEA3F40-202601",
             BardCode = "111111111111111"
         }.Presents<ICustomerCard>();
         
-        #endregion
-        
-        #region ACT
+        // Act
+        var result = await ProcessWithNullAllowed.Play(cardCode);
 
-        var result1 = await ProcessWithNullAllowed.Play(cardcode);
-        
-        #endregion
-
-        Assert.That(result1 == true);
+        // Assert
+        Assert.That(result, Is.True);
     }
     
     [Test]
-    public async Task Play_ScenarioWithoutNullAllowedAndRelatedRolesArePersisted_ScenarioExecuted()
+    public async Task GivenPersistedRelatedRoles_WhenScenarioWithoutNullAllowedIsPlayed_ThenRelatedRoleIsResolvedAndScenarioExecutes()
     {
-        #region ARRANGE
-        
+        // Arrange
         var card = new
         {
             Uid = "DD50AE10-5910-4C0C-8208-F8287D9220EC",
@@ -98,14 +92,10 @@ public class Case
         
         await ServiceLocator.Get<IRelationRepository>().Add(Relation.New(card.GetReference(), person.GetReference()));
         
-        #endregion
+        // Act
+        var result = await ProcessWithoutNullAllowedPersistedRelation.Play(card);
         
-        #region ACT
-
-        var result1 = await ProcessWithoutNullAllowedPersistedRelation.Play(card);
-        
-        #endregion
-
-        Assert.That(result1 == true);
+        // Assert
+        Assert.That(result,  Is.True);
     }
 }
