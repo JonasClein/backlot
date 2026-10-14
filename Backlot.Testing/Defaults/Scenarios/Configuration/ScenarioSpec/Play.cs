@@ -5,6 +5,9 @@ namespace Backlot.Testing.Defaults.Scenarios.Configuration.ScenarioSpec;
 
 /// <summary>
 /// Tests the machine-readable contract Backlot emits for its endpoints.
+/// These tests execute ScenarioSpec.Play() and verify the generated
+/// TypeSpec contract. The underlying contract generation is handled
+/// by TypeSpecEmitter.Emit().
 /// </summary>
 /// <remarks>
 /// These are characterization tests rather than a full snapshot: the document changes whenever a
