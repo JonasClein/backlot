@@ -4,15 +4,17 @@ using Backlot.Core.Json.Serialization.Newtonsoft;
 using Backlot.Core.Services;
 using Backlot.Services.Filesystem.LocalDiskStorage;
 using Backlot.Testing.Shared.TestModels;
+using Newtonsoft.Json.Linq;
 using NSubstitute;
 using NUnit.Framework;
+// ReSharper disable SuspiciousTypeConversion.Global
 
 namespace Backlot.Testing.UseCases.RoleSerialization;
 
 /// <summary>
 /// As a Backlot developer,
 /// I want to serialize and re-present roles using different serialization strategies,
-/// so that aliased properties and role skills are preserved.
+/// so that aliased properties, role skills and explicit null values are preserved.
 /// </summary>
 public class RoleSerialization
 {
@@ -94,6 +96,32 @@ public class RoleSerialization
             // however this test can fail when the order is different, is allowed to optimize that.
             Assert.That(formulaJsn, Does.Contain("\"__Skills\":[\"NumberBase\",\"Role\",\"Persist\",\"Permission\",\"Uid\",\"Formula\"]"));
             Assert.That(orderJson, Does.Contain("\"__Skills\":[\"Persist\",\"Permission\",\"Role\",\"Uid\",\"PersistedOrder\",\"NumberBase\",\"Formula\"]"));
+        });
+    }
+    
+    [Test]
+    public void GivenTwoJProxiesWhereTheLeadingJsonContainsANullValueForAProperty_WhenTheJProxiesAreMergedAndSerializedForPersistence_TheNullValueAndAdditionalPropertiesArePreserved()
+    {
+        // Arrange
+        
+        // var for this json {"Number1":1,"Number2":2,"Operation":"sum"}
+        var webJson = "{\"Number1\":1,\"Number2\":2,\"Operation\":null}";
+        var dbJson = "{\"Number1\":1,\"Number2\":2,\"Operation\":\"sum\",\"extra\":\"extras\"}";
+        var web = webJson.Presents<IFormula>();
+        var db = dbJson.Presents<IFormula>();
+        
+        // Act
+        ((IProxiedRole)web).Interceptor.CombineActor(db as IProxiedRole);
+        
+        var json = web.ToJson(Strategy.SerializeForPersistance);
+        var result = JObject.Parse(json);
+        
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result["extra"]?.Value<string>(), Is.EqualTo("extras"));
+            Assert.That(result.ToString(), Does.Contain("Operation"));
+            Assert.That(result["Operation"]?.Value<string>() , Is.Null);
         });
     }
 }
