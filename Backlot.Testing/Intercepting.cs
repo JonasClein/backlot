@@ -181,48 +181,6 @@ public class Intercepting
     }
     
     [Test]
-    public void Intercepting_WithJSONObjectsGettingUidFromDifferentSources_WhenCardCodeIsFilledUidIsCardCode()
-    {
-        // virtual case is described in the comments below.
-        
-        #region ARRANGE
-
-        // When created from the UI an item is created a custom generated Uid is used (no connection with the remote system yet).
-        var newItem = JObject.FromObject(new
-        {
-            Uid = "8a89ca8f03db4f80a846d2e0d4b5d3cb",
-            CustomerName = "Ferrari"
-        });
-        
-        // When returned from the remote api the unique identifier of the external system is returned (CardCode in this case).
-        var existingItem = JObject.FromObject(new
-        {
-            CardCode = "C001",
-            CustomerName = "Ferrari"
-        });
-
-        #endregion
-        
-        #region ACT
-        
-        // Both can be presented as
-
-        var p1 = newItem.Presents<ICard>();
-        var p2 = existingItem.Presents<ICard>();
-
-        #endregion
-
-        // for both objects the Uid have to be filled in.
-        // In case of of the newItem Uid is equal to Uid
-        // In case of existingItem Uid = CardCode
-        
-        Assert.That(p1.Uid == "8a89ca8f03db4f80a846d2e0d4b5d3cb");
-        Assert.That(p1.CardCode == null);
-        Assert.That(p2.Uid == "C001");
-        Assert.That(p2.CardCode == p2.Uid);
-    }
-    
-    [Test]
     [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global")]
     public void CombineActor_CombineJsonWithDictionary_NoneExistingPropertiesFromJsonObjectAreAddedToDictionary()
     {

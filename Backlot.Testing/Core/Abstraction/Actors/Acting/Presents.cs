@@ -141,4 +141,48 @@ public class Presents
         });
     }
     
+    [Test]
+    public void Presents_WithJSONObjectsGettingUidFromDifferentSources_WhenUidIsFilledUidIsPreserved()
+    {
+        // Arrange
+        // When created from the UI an item is created a custom generated Uid is used (no connection with the remote system yet).
+        var newItem = JObject.FromObject(new
+        {
+            Uid = "8a89ca8f03db4f80a846d2e0d4b5d3cb",
+            CustomerName = "Ferrari"
+        });
+
+        // Act
+        var role = newItem.Presents<ICard>();
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(role.Uid, Is.EqualTo("8a89ca8f03db4f80a846d2e0d4b5d3cb"));
+            Assert.That(role.CardCode, Is.Null);
+        });
+    }
+    
+    [Test]
+    public void Presents_WithJSONObjectsGettingUidFromDifferentSources_WhenCardCodeIsFilledUidIsCardCode()
+    {
+        // Arrange
+        // When returned from the remote api the unique identifier of the external system is returned (CardCode in this case).
+        var existingItem = JObject.FromObject(new
+        {
+            CardCode = "C001",
+            CustomerName = "Ferrari"
+        });
+
+        // Act
+        var role = existingItem.Presents<ICard>();
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(role.Uid, Is.EqualTo("C001"));
+            Assert.That(role.CardCode, Is.EqualTo(role.Uid));
+        });
+    }
+    
 }
