@@ -1,6 +1,7 @@
 using Backlot.Core;
 using Backlot.Core.Abstraction.Scenarios;
 using Backlot.Core.Security;
+using Backlot.Start.Roles;
 
 namespace Backlot.Start.Scenarios;
 
@@ -10,19 +11,25 @@ namespace Backlot.Start.Scenarios;
 /// </summary>
 /// <param name="role"></param>
 [Scenario(typeof(Hi), // this attribute allows the scenario to be executed as web request.
-    access: [Access.Everyone])] // by everyone who is in this group (Everyone is a reserved group name for everyone who has an account).
-public class Hi(IRole role) // use the right order for the parameters. (default role first, then all participant roles, then all interfaces managed by DI).
-    : Scenario<Hi, IRole, bool>(role) // inherit from Scenario or DirectorScenario
+    access:
+    [
+        Access.Everyone
+    ])] // by everyone who is in this group (Everyone is a reserved group name for everyone who has an account).
+public class
+    Hi(
+        IMessage
+            role) // use the right order for the parameters. (default role first, then all participant roles, then all interfaces managed by DI).
+    : Scenario<Hi, IMessage, string>(role) // inherit from Scenario or DirectorScenario
 {
     // [Configurable] // this attribute allows the setting to be configured via the admin panel or anything that inherits; IConfigurationManager
     // public string Setting { get; set; }
-    
+
     // optionally override public override bool Validate() for custom validation.
 
-    protected override bool Exec() // override Exec or ExecAsync, this is where your logic goes.
+    protected override string Exec() // override Exec or ExecAsync, this is where your logic goes.
     {
         // Role can't be null
-        return this.Role != null;
+        return Role.Message;
     }
 }
 
