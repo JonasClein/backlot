@@ -27,7 +27,7 @@ public class SameUidRoleUpdates
     }
     
     [Test]
-    public async Task  GivenDifferentTypeActorsReferringToSameUid_WhenPlayedTwice_ThenThrowsArgumentExceptionDuringMerge()
+    public async Task  GivenDifferentProxiedAndSelfRolesActorsReferringToSameUid_WhenPlayedTwice_ThenThrowsArgumentExceptionDuringMerge()
     {
         // Arrange
         const string uid = "023d02600ded";
@@ -98,7 +98,7 @@ public class SameUidRoleUpdates
     }
     
     [Test]
-    public async Task GivenDifferentTypeNoneRoleActorsReferringToSameUid_WhenPlayedTwice_ThenMergePersistedProperties()
+    public async Task GivenProxiedRolesWithDifferentActorTypesReferringToSameUid_WhenPlayedTwice_ThenMergeProperties()
     {
         // Arrange
         const string uid = "023d02600ded";
@@ -111,14 +111,14 @@ public class SameUidRoleUpdates
             Operation = "sum"
         };
 
-        var self = new FormulaIncomplete()
+        var updated = new FormulaIncomplete()
         {
             Uid = uid, // refers to the same object as previous one.
             Number1 = 12
         };
 
         var proxied = external.Presents<IFormula>();
-        var presented = self.Presents<IFormula>();
+        var presented = updated.Presents<IFormula>();
         
         var repo = ServiceLocator.Get<IPersistedRoleRepository>();
         
