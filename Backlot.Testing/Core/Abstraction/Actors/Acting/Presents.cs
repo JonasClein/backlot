@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Dynamic;
 using Backlot.Core;
 using Backlot.Core.Abstraction.Actors;
 using Backlot.Core.Json;
@@ -19,12 +20,18 @@ public class Presents
     {
         Initialize.Setup();
     }
+
+    private static void AliasSetup()
+    {
+        Initialize.Setup((builder) => new AliasDirector(new LocalDiskStorage(), Substitute.For<IConfigurationManager>(), builder));
+    }
     
     [Test]
     public void Presents_WithActorNotHavingAUidAndARoleAliasReferringToAnExpressionEngine_UidIsCalculatedBasedOnExpressionEngine()
     {
-        Initialize.Setup((builder) => new AliasDirector(new LocalDiskStorage(), Substitute.For<IConfigurationManager>(), builder));
         // Arrange
+        AliasSetup();
+        
         var actor = JObject.FromObject(new
         {
             Number1 = 7,
@@ -183,6 +190,61 @@ public class Presents
             Assert.That(role.Uid, Is.EqualTo("C001"));
             Assert.That(role.CardCode, Is.EqualTo(role.Uid));
         });
+    }
+    
+    [Test]
+    public void Presents_AnonymousActorWithNotDirectMatchingPropertyName_NotDirectMatchingPropertyNameIsCorrectedByAlias()
+    {
+        // Arrange
+        AliasSetup();
+        
+        var origin = new
+        {
+            Operatie = "sum",
+        };
+        
+        // Act
+        var role = origin.Presents<IFormula>();
+
+        // Assert
+        Assert.That(role.Operation, Is.EqualTo("sum"));
+    }
+
+    [Test]
+    public void
+        Presents_DictionaryActorWithNotDirectMatchingPropertyName_NotDirectMatchingPropertyNameIsCorrectedByAlias()
+    {
+        // Arrange
+        AliasSetup();
+        
+        var origin = new Dictionary<string, object>
+        {
+            ["Operatie"] = "sum"
+        };
+
+        // Act
+        var role = origin.Presents<IFormula>();
+
+        // Assert
+        Assert.That(role.Operation, Is.EqualTo("sum"));
+    }
+
+    [Test]
+    public void Presents_ExpandoObjectActorWithNotDirectMatchingPropertyName_NotDirectMatchingPropertyNameIsCorrectedByAlias()
+    {
+        AliasSetup();
+        // Arrange
+        AliasSetup();
+        
+        dynamic origin = new ExpandoObject();
+
+        origin.Operatie = "sum";
+        
+        // Act
+        var role = Backlot.Core.Abstraction.Actors.Acting.Presents<IFormula>(origin);
+
+        // Assert
+        Assert.That(role.Operation, Is.EqualTo("sum"));
     }
     
 }
