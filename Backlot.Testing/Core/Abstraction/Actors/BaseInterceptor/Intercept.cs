@@ -1,8 +1,11 @@
 using System.Linq;
 using Backlot.Core.Abstraction.Actors;
 using Backlot.Core.Json;
+using Backlot.Core.Services;
+using Backlot.Services.Filesystem.LocalDiskStorage;
 using Backlot.Testing.Shared.TestModels;
 using Newtonsoft.Json.Linq;
+using NSubstitute;
 using NUnit.Framework;
 // ReSharper disable SuspiciousTypeConversion.Global
 
@@ -17,6 +20,14 @@ public class Intercept
     public void Setup()
     {
         Initialize.Setup();
+    }
+    
+    // TODO: Move alias-specific test initialization to a shared helper
+    // in the planned Backlot.Testing.Defaults NuGet package.
+    // Also review how to avoid duplicate Initialize.Setup() calls.
+    private static void AliasSetup()
+    {
+        Initialize.Setup((builder) => new AliasDirector(new LocalDiskStorage(), Substitute.For<IConfigurationManager>(), builder));
     }
 
     [Test]
@@ -56,7 +67,6 @@ public class Intercept
             Assert.That(origin["Number1"]?.Value<int?>(), Is.Not.EqualTo(8), "JsonInterception does work with DeepCloned objects");
         });
     }
-    
     
     [Test]
     public void Intercept_WithJSONNestedRoleACTOR_ActorAndProxiedValuesAreInSync()
@@ -184,6 +194,37 @@ public class Intercept
             Assert.That(role.Formulas.First().Number1, Is.EqualTo(8));
             
             Assert.That(origin["Formulas"]?[0]?["Number1"]?.Value<int?>(), Is.Not.EqualTo(8));
+        });
+    }
+    
+    [Test]
+    public void Intercept_WithJSONActorUsingAliasses_AliasIsUpdatedInRoleAndDeepClonedOrigin()
+    {
+        // Arrange
+        AliasSetup();
+        
+        var origin = JObject.FromObject(new
+        {
+            Uid = "023d02600ded",
+            Number1 = 7,
+            Number2 = 9,
+            Op = "sum"
+        });
+        
+        var role = origin.Presents<IFormula>();
+        var jProxy = (IJProxy)role;
+
+        // Act
+        role.Operation = "new";
+        role.Number3 = 99;
+        
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(role.Operation, Is.EqualTo("new"));
+            Assert.That(jProxy.JActor["Op"]?.Value<string?>(), Is.EqualTo("new"));
+            Assert.That(origin["Op"]?.Value<string?>(), Is.Not.EqualTo("new"), "JsonInterception does work with DeepCloned objects");
+            Assert.That(role.Number3, Is.EqualTo(99));
         });
     }
 }

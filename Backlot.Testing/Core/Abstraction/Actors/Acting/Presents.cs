@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using Backlot.Core;
 using Backlot.Core.Abstraction.Actors;
 using Backlot.Core.Json;
@@ -21,6 +22,9 @@ public class Presents
         Initialize.Setup();
     }
 
+    // TODO: Move alias-specific test initialization to a shared helper
+    // in the planned Backlot.Testing.Defaults NuGet package.
+    // Also review how to avoid duplicate Initialize.Setup() calls.
     private static void AliasSetup()
     {
         Initialize.Setup((builder) => new AliasDirector(new LocalDiskStorage(), Substitute.For<IConfigurationManager>(), builder));
@@ -245,6 +249,36 @@ public class Presents
 
         // Assert
         Assert.That(role.Operation, Is.EqualTo("sum"));
+    }
+    
+    [Test]
+    public void Presents_WithJSONNestedRoleActorWhichNeedsAliassing_AliasValueIsUsedForRoleProperty()
+    {
+        // Arrange
+        AliasSetup();
+        
+        var origin = JObject.FromObject(new
+        {
+            Uid = "5DEB1636",
+            Formulas = new [] { 
+                new {
+                    Number1 = 7,
+                    Number2 = 9,
+                    Op = "sum" // alias for Operation.
+                },
+                new {
+                    Number1 = 17,
+                    Number2 = 19,
+                    Op = "sum"
+                }
+            }
+        });
+        
+        // Act
+        var role = origin.Presents<IFormulaGroup>();
+
+        // Assert
+        Assert.That(role.Formulas.First().Operation, Is.EqualTo("sum")); // "Op" alias is used for "Operation" value.
     }
     
 }

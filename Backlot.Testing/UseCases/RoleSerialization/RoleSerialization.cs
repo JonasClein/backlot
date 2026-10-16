@@ -18,6 +18,9 @@ namespace Backlot.Testing.UseCases.RoleSerialization;
 /// </summary>
 public class RoleSerialization
 {
+    // TODO: Move alias-specific test initialization to a shared helper
+    // in the planned Backlot.Testing.Defaults NuGet package.
+    // Also review how to avoid duplicate Initialize.Setup() calls.
     [SetUp]
     public void Setup()
     {
