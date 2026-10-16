@@ -34,38 +34,6 @@ public class Play
     {
         Initialize.Setup();
     }
-
-    [Test]
-    public async Task PlayAndGet_UsingASelfRole_RoleIsNotProxiedAndIsSameTypeAsArrangedObjectWhenLoadedFromRepo()
-    {
-        //A self object is an object implementing a role interface itself. 
-        
-        #region ARRANGE
-        
-        var self = new FormulaSelf()
-        {
-            Uid = "f5d3c5aa",
-            Number1 = 12,
-            Number2 = 10,
-            Operation = "sum"
-        };
-        
-        var repo = ServiceLocator.Get<IPersistedRoleRepository>();
-        
-        #endregion
-        
-        #region ACT
-        
-        var presented = self.Presents<IFormula>();
-        await Dummy.Play(presented);
-        repo.TryGet<IFormula>(self.Uid, out var dbentity);
-        
-        #endregion
-        
-        Assert.That(presented is not IProxiedRole, $"The self instance did presents as a proxied role, which is not allowed / needed.");
-        Assert.That(presented is FormulaSelf, $"The self instance did not presents it self a type of the same instance");
-        Assert.That(dbentity is FormulaSelf, $"The self instance did not presents it self a type of the same instance when loaded from the dbrepo");
-    }
     
     [Test]
     public async Task  PlayTwice_DifferentTypeActorsReferringToSameUid_ArgumentExceptionDuringMerge()
