@@ -30,7 +30,7 @@ public class Persist
         // Arrange
         var jObject = JObject.FromObject(new
         {
-            Uid = "UnitTestObject-" + Uid.New(),
+            Uid = "023d02600ded",
             Number1 = 7,
             Number2 = 9,
             Operation = "sum"
@@ -53,7 +53,7 @@ public class Persist
         // Arrange
         var jObject = JObject.FromObject(new
         {
-            Uid = "UnitTestObject-" + Uid.New(),
+            Uid = "023d02600ded",
             Number1 = 7,
             Number2 = 9,
             Operation = "sum"
@@ -78,7 +78,7 @@ public class Persist
         // Arrange
         var jObject = JObject.FromObject(new
         {
-            Uid = "UnitTestObject-" + Uid.New(),
+            Uid = "023d02600ded",
             Number1 = 7,
             Number2 = 9,
             Operation = "sum"
@@ -102,7 +102,7 @@ public class Persist
     public async Task Persist_UpdateWritableObject_MergesUpdatedAndExistingProperties()
     {
         // Arrange
-        var uid = "UnitTestObject-" + Uid.New();
+        const string uid = "023d02600ded";
 
         var stored = JObject.FromObject(new
         {
@@ -154,7 +154,7 @@ public class Persist
     public void Persist_UpdateReadOnlyObject_ThrowsPermissionControlException()
     {
         // Arrange
-        var uid = "UnitTestObject-" + Uid.New();
+        const string uid = "023d02600ded";
 
         var stored = JObject.FromObject(new
         {
@@ -196,7 +196,7 @@ public class Persist
         // Arrange
         var newObject = JObject.FromObject(new
         {
-            Uid = "UnitTestObject-" + Uid.New(),
+            Uid = "023d02600ded",
             Number1 = 7,
             Number2 = 9,
             Operation = "sum"
@@ -226,7 +226,7 @@ public class Persist
         // Arrange
         var jObject = JObject.FromObject(new
         {
-            Uid = "UnitTestObject-" + Uid.New(),
+            Uid = "023d02600ded",
             Number1 = 7,
             Number2 = 9,
             Operation = "sum",
