@@ -4,6 +4,7 @@ using System.Linq;
 using Backlot.Core;
 using Backlot.Core.Abstraction.Actors;
 using Backlot.Core.Json;
+using Backlot.Core.Security;
 using Backlot.Core.Services;
 using Backlot.Services.Filesystem.LocalDiskStorage;
 using Backlot.Testing.Shared.TestModels;
@@ -279,6 +280,57 @@ public class Presents
 
         // Assert
         Assert.That(role.Formulas.First().Operation, Is.EqualTo("sum")); // "Op" alias is used for "Operation" value.
+    }
+    
+    [Test]
+    public void Presents_TypedObjectWithItsOwnPermissionProperty_PermissionPropertyIsIgnoredAndDefaultIsUsed()
+    {
+        // Arrange
+        var typed = new FormulaPermission
+        {
+            Uid = "023d02600ded",
+            Number1 = 7,
+            Number2 = 9,
+            Operation = "sum",
+            __Permission = "m::0" //try to overwrite backlot permissions
+        };
+        
+        // Act
+        var role = typed.Presents<IFormula>();
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            //because permission is not set via backlot, the default permission is returned. The Actor Interceptor does protect reading the origin permission and turns the actor value into null
+            Assert.That(role.Permission(), Is.EqualTo(Permission.Create(PermissionLevel.ReadWriteExecute)), $"{nameof(PermissionLevel.ReadWriteExecute)} is default for IPermissionized roles.");
+            Assert.That((role as IJProxy)?.JActor["__Permission"], Is.Null, $"Actor.{nameof(IPermission.__Permission)} is removed.");
+        });
+    }
+    
+    [Test]
+    public void Presents_AnonymousObjectWithItsOwnPermissionProperty_PermissionPropertyIsIgnoredAndDefaultIsUsed()
+    {
+        // Arrange
+        var anonymousObject = new
+        {
+            Uid = "023d02600ded",
+            Number1 = 7,
+            Number2 = 9,
+            Operation = "sum",
+            __Permission = "m::0" //try to overwrite backlot permissions
+        };
+        
+        // Act
+        var role = anonymousObject.Presents<IFormula>();
+        var per = (role as IJProxy)?.JActor[nameof(IPermission.__Permission)];
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(role, Is.InstanceOf<IJProxy>()); // when presented an anonymous object is turned into a IJProxy.
+            Assert.That(per, Is.Null); // permission value used in the "converted json" origin.
+            Assert.That(role.Permission().ToString(), Is.EqualTo("m::7")); // default permission is set.
+        });
     }
     
 }

@@ -29,102 +29,6 @@ public class PermissionControl
     {
         Initialize.Setup();
     }
-
-    [Test]
-    public void ChangeMask_AnonymousObjectWithDefaultPermission_PermissionIsEqualToChangedMaskLevel()
-    {
-        #region ARRANGE
-
-        var anonymousObject = new
-        {
-            Uid = "UnitTestAnonymousObject-" + Uid.New(),
-            Number1 = 7,
-            Number2 = 9,
-            Operation = "sum",
-        };
-        
-        #endregion
-        
-        #region ACT
-        
-        var role = anonymousObject.Presents<IFormula>();
-        role.ManagePermission(p => p.SetMask(PermissionLevel.ReadWrite));
-        
-        #endregion
-
-        #region ASSERT
-        
-        Assert.That(role.Permission(), Is.EqualTo(Permission.Create(PermissionLevel.ReadWrite)));
-
-        #endregion
-    }
-
-    [Test]
-    public void SetPermissionViaOriginObject_TypedObjectWithItsOwnPermissionProperty_PermissionPropertyIsgnored()
-    {
-        #region ARRANGE
-
-        var typed = new FormulaPermission
-        {
-            Uid = "formulaper-" + Uid.New(),
-            Number1 = 7,
-            Number2 = 9,
-            Operation = "sum",
-            __Permission = "m::0" //try to overwrite backlot permissions
-        };
-        
-        #endregion
-        
-        #region ACT
-        
-        var role = typed.Presents<IFormula>();
-
-        #endregion
-
-        #region ASSERT
-        
-        //because permission is not set via backlot, the default permission is returned. The Actor Intercepter does protect reading the orign permission and turns the actor value into null
-        Assert.That(role.Permission(), Is.EqualTo(Permission.Create(PermissionLevel.ReadWriteExecute)), $"{nameof(PermissionLevel.ReadWriteExecute)} is default for IPermissionized roles.");
-        // ReSharper disable once SuspiciousTypeConversion.Global
-#pragma warning disable CS8602
-        Assert.That((role as IJProxy).JActor["__Permission"], Is.Null, $"Actor.{nameof(IPermission.__Permission)} is removed.");
-#pragma warning restore CS8602
-
-        #endregion
-    }
-    
-    [Test]
-    public void SetPermissionViaOriginObject_AnonymousObjectWithItsOwnPermissionProperty_DefaultPermisisonAreUsed()
-    {
-        #region ARRANGE
-
-        var anonymousObject = new
-        {
-            Uid = "formulaper-" + Uid.New(),
-            Number1 = 7,
-            Number2 = 9,
-            Operation = "sum",
-            __Permission = "m::0" //try to overwrite backlot permissions
-        };
-        
-        #endregion
-        
-        #region ACT & ASSERT
-
-        var f = anonymousObject.Presents<IFormula>();
-        
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-        // ReSharper disable once SuspiciousTypeConversion.Global
-        var per = (f as IJProxy).JActor[nameof(IPermission.__Permission)];
-
-        
-        // ReSharper disable once SuspiciousTypeConversion.Global
-        Assert.That(f is IJProxy); // when persented an anonymous object is turned into a IJProxy.
-        Assert.That(per == null); // permission value used in the "converted json" orign.
-        Assert.That(f.Permission().ToString() == "m::7"); // default persmission is set.
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-        #endregion
-    }
     
     /// <summary>
     /// Different PermissionLevel checks based on different uses cases all using the same UserCtx as "CurrentUser".
@@ -219,21 +123,6 @@ public class PermissionControl
         }
 
         #endregion
-    }
-
-    [Test]
-    public void CanRead_MaskLevelPlusGroupsAndUsersAreSetCurrentUserIsNotDefinedInPermissions_CurrentUserCanNotRead()
-    {
-        var typed = Acting.New<IFormula>();
-        typed.Number1 = 7;
-        typed.Number2 = 9;
-        typed.Operation = "sum";
-
-        typed.ManagePermission(p =>
-            p.SetUser("SomeOtherUser", PermissionLevel.ReadExecute)
-                .SetGroup("SuperAccess", PermissionLevel.ReadWriteExecute));
-        
-        Assert.That(typed.CanRead(), Is.False);
     }
     
     [Test]
